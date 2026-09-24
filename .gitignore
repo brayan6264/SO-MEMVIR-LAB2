@@ -1,0 +1,18 @@
+# Binarios generados por el Makefile
+memsim
+memsim.exe
+src/*.o
+
+# Binarios de los tests de integracion compilados a mano
+test_translate
+test_translate.exe
+test_paso2_fifo
+test_paso2_fifo.exe
+
+# Basura tipica de cada sistema operativo
+.DS_Store
+Thumbs.db
+
+# Carpetas de configuracion de editores/IDEs
+.vscode/
+.idea/

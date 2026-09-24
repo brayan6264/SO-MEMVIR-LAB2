@@ -29,7 +29,7 @@ make clean
 - `archivo_entrada`: archivo de texto con los comandos a simular (ver formato abajo).
 - `fifo|lru`: qué política de reemplazo usar cuando no hay marcos físicos libres.
 - `memoria_fisica_kb` (opcional): tamaño de la memoria física en KB. Por defecto 256.
-- `tamano_pagina_bytes` (opcional): tamaño de página en bytes. Por defecto 4096.
+- `tamano_pagina_bytes` (opcional): **no cambia el tamaño de página real.** El tamaño de página es una constante de compilación (`PAGE_SIZE` en `config.h`, 4096 bytes) usada en varios módulos ya probados; no es configurable en tiempo de ejecución en esta versión. Si se pasa un valor distinto de 4096, el programa lo ignora y avisa por `stderr`, pero sigue corriendo con el valor fijo.
 
 Ejemplo:
 
@@ -55,8 +55,8 @@ free <direccion_virtual>
 ```
 
 - `alloc <bytes>`: reserva un bloque de memoria virtual (se redondea hacia arriba al tamaño de página) y lo deja disponible para usarse en los siguientes `write`/`read`.
-- `write <direccion_virtual> <valor>`: escribe un valor en esa dirección.
-- `read <direccion_virtual>`: lee lo que hay guardado en esa dirección.
+- `write <direccion_virtual> <valor>`: dispara la traducción VA→PA sobre esa dirección (crea tablas de nivel 2 si hace falta, y un fallo de página si la página no está cargada). El simulador **no almacena el contenido real de memoria**: el `<valor>` se parsea para mantener el formato del comando, pero se descarta — el objetivo es ejercitar la traducción y las estadísticas, no simular el contenido de la memoria byte por byte.
+- `read <direccion_virtual>`: dispara la misma traducción VA→PA, sin marcar la página como modificada. Por la misma razón que `write`, no devuelve ni imprime ningún valor leído.
 - `free <direccion_virtual>`: libera el bloque que empezó en esa dirección (tiene que ser una dirección devuelta por un `alloc` anterior, no cualquier dirección dentro del bloque).
 
 Ejemplo de archivo de entrada:
@@ -97,3 +97,4 @@ Cada archivo se encarga de una sola cosa: la tabla de páginas y la traducción 
 - La dirección virtual es de 32 bits y se parte en PT1 (10 bits) / PT2 (10 bits) / offset (12 bits).
 - Las tablas de segundo nivel se crean dinámicamente la primera vez que hacen falta, no se reserva todo de entrada.
 - La política de reemplazo (FIFO o LRU) se elige por línea de comandos, no hace falta recompilar para cambiarla.
+- El simulador prioriza la exactitud de la traducción VA→PA, el manejo de fallos y las estadísticas (que es lo que pide la salida esperada) sobre simular el contenido real de la memoria; ver la sección "Formato del archivo de entrada" arriba.

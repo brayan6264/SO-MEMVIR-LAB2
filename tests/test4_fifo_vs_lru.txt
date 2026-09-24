@@ -1,0 +1,7 @@
+alloc 12288
+write 0 1
+write 4096 2
+read 0
+write 8192 3
+read 0
+read 4096

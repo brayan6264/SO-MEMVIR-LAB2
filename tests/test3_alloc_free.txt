@@ -1,0 +1,9 @@
+alloc 4096
+write 0 111
+alloc 4096
+write 4096 222
+free 0
+alloc 4096
+write 8192 333
+read 4096
+read 8192

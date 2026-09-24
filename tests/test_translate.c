@@ -39,12 +39,6 @@ int page_fault_handle(phys_mem_t *pm, replacement_policy_t *policy, pte_t *new_o
     return frame;
 }
 
-void stats_init(stats_t *s) { s->accesses = s->faults = s->replacements = 0; }
-void stats_print(const stats_t *s, const char *policy_name) {
-    printf("accesses=%ld faults=%ld replacements=%ld policy=%s\n",
-           s->accesses, s->faults, s->replacements, policy_name);
-}
-
 int main(void) {
     replacement_policy_t policy = {
         .name = "MOCK", .on_load = mock_on_load, .on_access = mock_on_access,

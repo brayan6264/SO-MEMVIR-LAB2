@@ -7,13 +7,6 @@
 // prueba de integracion real (page_table + translate + phys_mem + replacement_fifo + page_fault)
 // con memoria fisica de solo 2 marcos, para forzar reemplazos
 
-// stats.c todavia no existe (es del paso 3): mock minimo solo para este test
-void stats_init(stats_t *s) { s->accesses = s->faults = s->replacements = 0; }
-void stats_print(const stats_t *s, const char *policy_name) {
-    printf("accesses=%ld faults=%ld replacements=%ld policy=%s\n",
-           s->accesses, s->faults, s->replacements, policy_name);
-}
-
 int main(void) {
     page_table_t *pt = page_table_create();
     phys_mem_t *pm = phys_mem_create(2 * PAGE_SIZE);
