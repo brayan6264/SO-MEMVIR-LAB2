@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "replacement.h"
+#include "domain/replacement.h"
 
 typedef struct {
     int *queue;

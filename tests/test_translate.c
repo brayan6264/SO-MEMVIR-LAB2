@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "translate.h"
-#include "config.h"
+#include "application/translate.h"
+#include "domain/config.h"
 
 // mocks temporales de los modulos de B y C, solo para probar translate.c en aislamiento
 

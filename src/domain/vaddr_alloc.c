@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "vaddr_alloc.h"
+#include "domain/vaddr_alloc.h"
 
 // lista simple de bloques reservados: {base, size} + siguiente
 typedef struct alloc_node {

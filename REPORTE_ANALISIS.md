@@ -93,7 +93,3 @@ valgrind --leak-check=full --show-leak-kinds=all ./memsim tests/test4_fifo_vs_lr
 ```
 
 El mismo resultado (0 fugas y 0 errores) se obtuvo con las 4 pruebas en FIFO y en LRU, con páginas de 1KB, 8KB y 64KB, con las salidas por error (archivo inexistente, política inválida y tamaño de página inválido) y con las pruebas en C `test_translate` y `test_paso2_fifo`.
-
-## 8. Pendientes antes de entregar
-
-- [ ] Completar integrantes y la política oficialmente asignada (encabezado).

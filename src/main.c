@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include "cli_options.h"
-#include "commands.h"
+#include "infrastructure/cli_options.h"
+#include "application/commands.h"
+#include "infrastructure/replacement_factory.h"
 
 static void run_simulation(FILE *input, commands_ctx_t *ctx) {
     char line[256];

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "phys_mem.h"
+#include "domain/phys_mem.h"
 
 struct phys_mem {
     int num_frames;

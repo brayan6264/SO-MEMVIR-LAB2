@@ -1,4 +1,4 @@
-#include "page_release.h"
+#include "application/page_release.h"
 
 static void page_release(phys_mem_t *pm, replacement_policy_t *policy, pte_t *pte) {
     policy->on_release(policy->self, (int)pte->frame);

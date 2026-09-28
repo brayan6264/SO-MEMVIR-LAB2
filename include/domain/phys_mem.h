@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "page_table.h"
+#include "domain/page_table.h"
 
 // contrato del equipo, implementacion en src/phys_mem.c (Persona B)
 typedef struct phys_mem phys_mem_t;

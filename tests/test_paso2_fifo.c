@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "translate.h"
-#include "config.h"
+#include "application/translate.h"
+#include "domain/config.h"
 
 // prueba de integracion real (page_table + translate + phys_mem + replacement_fifo + page_fault)
 // con memoria fisica de solo 2 marcos, para forzar reemplazos

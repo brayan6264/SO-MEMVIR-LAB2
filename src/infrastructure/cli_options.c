@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cli_options.h"
-#include "config.h"
+#include "infrastructure/cli_options.h"
+#include "domain/config.h"
 
 static void print_usage(const char *prog) {
     fprintf(stderr, "Uso: %s <archivo_entrada> <fifo|lru> [memoria_fisica_kb] [tamano_pagina_bytes]\n", prog);

@@ -1,18 +1,21 @@
 CC = gcc
 CFLAGS = -Wall -Werror -std=c99 -Iinclude
 TARGET = memsim
+OBJDIR = obj
+SRCDIRS = src src/domain src/application src/infrastructure
 
-SRCS = $(wildcard src/*.c)
-OBJS = $(SRCS:.c=.o)
+SRCS = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
+OBJS = $(addprefix $(OBJDIR)/,$(notdir $(SRCS:.c=.o)))
+vpath %.c $(SRCDIRS)
 
 ifeq ($(OS),Windows_NT)
 	EXE = .exe
-	RM = del /Q
-	CLEAN_FILES = $(subst /,\,$(OBJS)) $(TARGET)$(EXE)
+	MKDIR = if not exist $(OBJDIR) mkdir $(OBJDIR)
+	CLEAN = if exist $(OBJDIR) rmdir /S /Q $(OBJDIR) & if exist $(TARGET)$(EXE) del /Q $(TARGET)$(EXE)
 else
 	EXE =
-	RM = rm -f
-	CLEAN_FILES = $(OBJS) $(TARGET)$(EXE)
+	MKDIR = mkdir -p $(OBJDIR)
+	CLEAN = rm -rf $(OBJDIR) $(TARGET)$(EXE)
 endif
 
 .PHONY: all clean run
@@ -22,11 +25,14 @@ all: $(TARGET)$(EXE)
 $(TARGET)$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)$(EXE)
 
-src/%.o: src/%.c
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJDIR):
+	$(MKDIR)
+
 clean:
-	-$(RM) $(CLEAN_FILES)
+	-$(CLEAN)
 
 run: $(TARGET)$(EXE)
 	./$(TARGET)$(EXE) $(ARGS)

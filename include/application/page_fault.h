@@ -1,10 +1,10 @@
 #ifndef PAGE_FAULT_H
 #define PAGE_FAULT_H
 
-#include "page_table.h"
-#include "phys_mem.h"
-#include "replacement.h"
-#include "stats.h"
+#include "domain/page_table.h"
+#include "domain/phys_mem.h"
+#include "domain/replacement.h"
+#include "domain/stats.h"
 
 // contrato del equipo, implementacion en src/page_fault.c (Persona B)
 // devuelve el marco listo para usar; ya deja al PTE nuevo registrado en la politica (on_load)

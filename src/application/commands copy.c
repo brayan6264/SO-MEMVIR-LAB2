@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "commands.h"
-#include "page_release.h"
+#include "application/commands.h"
+#include "application/page_release.h"
 
 uint32_t cmd_alloc(commands_ctx_t *ctx, size_t bytes) {
     return vaddr_alloc_table_alloc(ctx->va, bytes);
@@ -35,7 +35,7 @@ bool commands_process_line(commands_ctx_t *ctx, const char *line) {
         return true; // linea vacia o solo espacios en blanco: se ignora sin error
     }
     if (cmd[0] == '#') {
-        return true; // comentario
+        return true; 
     }
 
     if (strcmp(cmd, "alloc") == 0) {

@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include "page_config.h"
+#include "domain/page_config.h"
 
 typedef struct {
     const char *input_path;

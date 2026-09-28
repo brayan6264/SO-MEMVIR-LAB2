@@ -1,7 +1,7 @@
 # Binarios generados por el Makefile
 memsim
 memsim.exe
-src/*.o
+obj/
 
 # Binarios de los tests de integracion compilados a mano
 test_translate

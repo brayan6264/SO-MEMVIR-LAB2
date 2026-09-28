@@ -1,5 +1,5 @@
-#include "page_config.h"
-#include "config.h"
+#include "domain/page_config.h"
+#include "domain/config.h"
 
 static bool is_power_of_two(uint32_t value) {
     return value != 0 && (value & (value - 1)) == 0;

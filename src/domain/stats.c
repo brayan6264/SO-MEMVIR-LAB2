@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "stats.h"
+#include "domain/stats.h"
 
 void stats_init(stats_t *s) {
     s->accesses = 0;

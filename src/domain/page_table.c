@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "page_table.h"
+#include "domain/page_table.h"
 
 struct page_table {
     page_config_t cfg;

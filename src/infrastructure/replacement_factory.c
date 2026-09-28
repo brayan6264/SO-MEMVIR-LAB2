@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "replacement.h"
+#include "infrastructure/replacement_factory.h"
 
 replacement_policy_t *replacement_create(const char *name, int num_frames) {
     if (strcmp(name, "fifo") == 0) return replacement_fifo_create(num_frames);

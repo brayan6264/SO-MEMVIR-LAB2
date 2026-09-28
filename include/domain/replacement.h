@@ -14,8 +14,5 @@ typedef struct {
 
 replacement_policy_t *replacement_fifo_create(int num_frames);
 replacement_policy_t *replacement_lru_create(int num_frames);
-// devuelve NULL si name no es "fifo" ni "lru"
-replacement_policy_t *replacement_create(const char *name, int num_frames);
-void replacement_destroy(replacement_policy_t *policy);
 
 #endif

@@ -3,12 +3,12 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "page_table.h"
-#include "phys_mem.h"
-#include "replacement.h"
-#include "translate.h"
-#include "vaddr_alloc.h"
-#include "stats.h"
+#include "domain/page_table.h"
+#include "domain/phys_mem.h"
+#include "domain/replacement.h"
+#include "application/translate.h"
+#include "domain/vaddr_alloc.h"
+#include "domain/stats.h"
 
 // agrupa todo el estado que necesita cada comando, para no pasar 5 parametros sueltos
 // a cada funcion. main.c la arma una vez y la pasa por puntero.

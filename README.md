@@ -107,14 +107,19 @@ En `tests/` estan los txt que usamos:
 Tambien hay dos pruebas en C (`test_translate.c` y `test_paso2_fifo.c`) que no estan en el makefile, toca compilarlas a mano, por ejemplo:
 
 ```bash
-gcc -Wall -Werror -std=c99 -Iinclude tests/test_paso2_fifo.c src/page_table.c src/page_config.c src/translate.c src/stats.c src/phys_mem.c src/replacement_fifo.c src/page_fault.c -o test_paso2_fifo
+gcc -Wall -Werror -std=c99 -Iinclude tests/test_paso2_fifo.c src/domain/page_table.c src/domain/page_config.c src/application/translate.c src/domain/stats.c src/domain/phys_mem.c src/domain/replacement_fifo.c src/application/page_fault.c -o test_paso2_fifo
 ```
 
 ## Estructura
 
 ```
-include/   los .h
-src/       los .c
+include/   los .h, con las mismas carpetas que src
+src/
+  domain/          tabla de paginas, memoria fisica, FIFO, LRU, estadisticas
+  application/     traduccion, fallos de pagina, free, comandos
+  infrastructure/  argumentos de consola y la fabrica de politicas
+  main.c
+obj/       los .o que genera el make (no se suben)
 tests/     archivos de prueba
 Makefile
 ```
