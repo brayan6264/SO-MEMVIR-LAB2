@@ -8,8 +8,9 @@
 
 struct phys_mem { int next_frame; };
 
-phys_mem_t *phys_mem_create(size_t phys_mem_bytes) {
+phys_mem_t *phys_mem_create(size_t phys_mem_bytes, uint32_t page_size) {
     (void)phys_mem_bytes;
+    (void)page_size;
     phys_mem_t *pm = malloc(sizeof(phys_mem_t));
     pm->next_frame = 0;
     return pm;
@@ -44,8 +45,10 @@ int main(void) {
         .name = "MOCK", .on_load = mock_on_load, .on_access = mock_on_access,
         .select_victim = mock_select_victim, .destroy = mock_destroy, .self = NULL
     };
-    page_table_t *pt = page_table_create();
-    phys_mem_t *pm = phys_mem_create(256 * 1024);
+    page_config_t cfg;
+    page_config_init(&cfg, DEFAULT_PAGE_SIZE);
+    page_table_t *pt = page_table_create(&cfg);
+    phys_mem_t *pm = phys_mem_create(256 * 1024, cfg.page_size);
     stats_t stats;
     stats_init(&stats);
 
@@ -54,7 +57,7 @@ int main(void) {
     uint32_t pa3 = translate(pt, pm, &policy, &stats, 0, false);   // hit: misma pagina que pa1
 
     assert(pa1 == 0);
-    assert(pa2 == PAGE_SIZE);
+    assert(pa2 == cfg.page_size);
     assert(pa3 == pa1);
     assert(stats.accesses == 3);
     assert(stats.faults == 2);
@@ -62,7 +65,7 @@ int main(void) {
 
     uint32_t vaddr_cross_pt1 = (1u << 22); // pt1=1, pt2=0, offset=0: fuerza otra tabla de nivel 2
     uint32_t pa4 = translate(pt, pm, &policy, &stats, vaddr_cross_pt1, true);
-    assert(pa4 == 2 * PAGE_SIZE);
+    assert(pa4 == 2 * cfg.page_size);
 
     printf("todas las pruebas de translate pasaron\n");
     stats_print(&stats, "MOCK");

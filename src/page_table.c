@@ -1,40 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "page_table.h"
-#include "config.h"
 
 struct page_table {
-    pte_t *pt2[PT_ENTRIES]; // NULL hasta que se crea bajo demanda
+    page_config_t cfg;
+    pte_t **pt2; // NULL hasta que se crea bajo demanda
 };
 
-page_table_t *page_table_create(void) {
-    page_table_t *pt = calloc(1, sizeof(page_table_t));
-    if (!pt) {
-        fprintf(stderr, "page_table_create: sin memoria\n");
+static void *checked_calloc(size_t count, size_t size) {
+    void *memory = calloc(count, size);
+    if (!memory) {
+        fprintf(stderr, "page_table: sin memoria\n");
         exit(1);
     }
+    return memory;
+}
+
+page_table_t *page_table_create(const page_config_t *cfg) {
+    page_table_t *pt = checked_calloc(1, sizeof(page_table_t));
+    pt->cfg = *cfg;
+    pt->pt2 = checked_calloc(cfg->pt1_entries, sizeof(pte_t *));
     return pt;
 }
 
 void page_table_destroy(page_table_t *pt) {
     if (!pt) return;
-    for (int i = 0; i < PT_ENTRIES; i++) {
+    for (uint32_t i = 0; i < pt->cfg.pt1_entries; i++) {
         free(pt->pt2[i]);
     }
+    free(pt->pt2);
     free(pt);
 }
 
+const page_config_t *page_table_config(const page_table_t *pt) {
+    return &pt->cfg;
+}
+
 pte_t *page_table_get_pte(page_table_t *pt, uint32_t vaddr, bool create) {
-    uint32_t idx1 = (vaddr >> (PT2_BITS + OFFSET_BITS)) & (PT_ENTRIES - 1);
-    uint32_t idx2 = (vaddr >> OFFSET_BITS) & (PT_ENTRIES - 1);
+    uint32_t idx1 = page_config_pt1_index(&pt->cfg, vaddr);
+    uint32_t idx2 = page_config_pt2_index(&pt->cfg, vaddr);
 
     if (pt->pt2[idx1] == NULL) {
         if (!create) return NULL;
-        pt->pt2[idx1] = calloc(PT_ENTRIES, sizeof(pte_t));
-        if (!pt->pt2[idx1]) {
-            fprintf(stderr, "page_table_get_pte: sin memoria\n");
-            exit(1);
-        }
+        pt->pt2[idx1] = checked_calloc(pt->cfg.pt2_entries, sizeof(pte_t));
     }
     return &pt->pt2[idx1][idx2];
 }

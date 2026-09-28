@@ -27,6 +27,26 @@ static int fifo_select_victim(void *self) {
     return victim;
 }
 
+static void fifo_remove_at(fifo_state_t *s, int index) {
+    for (int i = index; i < s->count - 1; i++) {
+        int current = (s->head + i) % s->capacity;
+        int next = (s->head + i + 1) % s->capacity;
+        s->queue[current] = s->queue[next];
+    }
+    s->tail = (s->tail - 1 + s->capacity) % s->capacity;
+    s->count--;
+}
+
+static void fifo_on_release(void *self, int frame) {
+    fifo_state_t *s = self;
+    for (int i = 0; i < s->count; i++) {
+        if (s->queue[(s->head + i) % s->capacity] == frame) {
+            fifo_remove_at(s, i);
+            return;
+        }
+    }
+}
+
 static void fifo_destroy(void *self) {
     fifo_state_t *s = self;
     free(s->queue);
@@ -50,6 +70,7 @@ replacement_policy_t *replacement_fifo_create(int num_frames) {
     policy->on_load = fifo_on_load;
     policy->on_access = fifo_on_access;
     policy->select_victim = fifo_select_victim;
+    policy->on_release = fifo_on_release;
     policy->destroy = fifo_destroy;
     policy->self = state;
     return policy;

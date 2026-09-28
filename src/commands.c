@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "commands.h"
+#include "page_release.h"
 
 uint32_t cmd_alloc(commands_ctx_t *ctx, size_t bytes) {
     return vaddr_alloc_table_alloc(ctx->va, bytes);
@@ -18,11 +19,13 @@ void cmd_read(commands_ctx_t *ctx, uint32_t vaddr) {
 }
 
 bool cmd_free(commands_ctx_t *ctx, uint32_t vaddr) {
-    bool ok = vaddr_alloc_table_free(ctx->va, vaddr, ctx->pt, ctx->pm);
-    if (!ok) {
+    uint32_t size;
+    if (!vaddr_alloc_table_free(ctx->va, vaddr, &size)) {
         fprintf(stderr, "free: 0x%x no es la base de ningun alloc vivo, se ignora\n", vaddr);
+        return false;
     }
-    return ok;
+    page_release_range(ctx->pt, ctx->pm, ctx->policy, vaddr, size);
+    return true;
 }
 
 bool commands_process_line(commands_ctx_t *ctx, const char *line) {

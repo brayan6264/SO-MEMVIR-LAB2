@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "phys_mem.h"
-#include "config.h"
 
 struct phys_mem {
     int num_frames;
@@ -10,14 +9,14 @@ struct phys_mem {
     pte_t **owner;
 };
 
-phys_mem_t *phys_mem_create(size_t phys_mem_bytes) {
+phys_mem_t *phys_mem_create(size_t phys_mem_bytes, uint32_t page_size) {
     phys_mem_t *pm = calloc(1, sizeof(phys_mem_t));
     if (!pm) {
         fprintf(stderr, "phys_mem_create: sin memoria\n");
         exit(1);
     }
 
-    pm->num_frames = (int)(phys_mem_bytes / PAGE_SIZE);
+    pm->num_frames = (int)(phys_mem_bytes / page_size);
     pm->free_stack = malloc(sizeof(int) * (size_t)pm->num_frames);
     pm->owner = calloc((size_t)pm->num_frames, sizeof(pte_t *));
     if (!pm->free_stack || !pm->owner) {

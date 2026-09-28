@@ -7,11 +7,15 @@ typedef struct {
     void (*on_load)(void *self, int frame);
     void (*on_access)(void *self, int frame);
     int (*select_victim)(void *self);
+    void (*on_release)(void *self, int frame);
     void (*destroy)(void *self);
     void *self;
 } replacement_policy_t;
 
 replacement_policy_t *replacement_fifo_create(int num_frames);
 replacement_policy_t *replacement_lru_create(int num_frames);
+// devuelve NULL si name no es "fifo" ni "lru"
+replacement_policy_t *replacement_create(const char *name, int num_frames);
+void replacement_destroy(replacement_policy_t *policy);
 
 #endif

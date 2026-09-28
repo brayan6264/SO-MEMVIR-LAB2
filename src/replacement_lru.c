@@ -31,6 +31,11 @@ static int lru_select_victim(void *self) {
     return victim;
 }
 
+static void lru_on_release(void *self, int frame) {
+    (void)self;
+    (void)frame; // on_load reescribe last_used cuando el marco vuelve a usarse
+}
+
 static void lru_destroy(void *self) {
     lru_state_t *s = self;
     free(s->last_used);
@@ -59,6 +64,7 @@ replacement_policy_t *replacement_lru_create(int num_frames) {
     policy->on_load = lru_on_load;
     policy->on_access = lru_on_access;
     policy->select_victim = lru_select_victim;
+    policy->on_release = lru_on_release;
     policy->destroy = lru_destroy;
     policy->self = state;
     return policy;

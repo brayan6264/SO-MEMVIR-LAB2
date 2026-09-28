@@ -1,9 +1,69 @@
-alloc 16384
+alloc 270336
 write 0 1
 write 4096 2
 write 8192 3
 write 12288 4
+write 16384 5
+write 20480 6
+write 24576 7
+write 28672 8
+write 32768 9
+write 36864 10
+write 40960 11
+write 45056 12
+write 49152 13
+write 53248 14
+write 57344 15
+write 61440 16
+write 65536 17
+write 69632 18
+write 73728 19
+write 77824 20
+write 81920 21
+write 86016 22
+write 90112 23
+write 94208 24
+write 98304 25
+write 102400 26
+write 106496 27
+write 110592 28
+write 114688 29
+write 118784 30
+write 122880 31
+write 126976 32
+write 131072 33
+write 135168 34
+write 139264 35
+write 143360 36
+write 147456 37
+write 151552 38
+write 155648 39
+write 159744 40
+write 163840 41
+write 167936 42
+write 172032 43
+write 176128 44
+write 180224 45
+write 184320 46
+write 188416 47
+write 192512 48
+write 196608 49
+write 200704 50
+write 204800 51
+write 208896 52
+write 212992 53
+write 217088 54
+write 221184 55
+write 225280 56
+write 229376 57
+write 233472 58
+write 237568 59
+write 241664 60
+write 245760 61
+write 249856 62
+write 253952 63
+write 258048 64
+write 262144 65
+write 266240 66
 read 0
 read 4096
-read 8192
-read 12288

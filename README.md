@@ -1,51 +1,58 @@
-# Simulador de memoria virtual (paginación)
+# Simulador de memoria virtual (paginacion)
 
-Simula la traducción de direcciones virtuales a direcciones físicas usando paginación de dos niveles (parecido a x86-64 pero simplificado). Maneja fallos de página y, cuando ya no queda memoria física libre, aplica una política de reemplazo (FIFO o LRU, se elige al ejecutar el programa).
+Laboratorio de Sistemas Operativos. El programa simula como se traducen direcciones virtuales a fisicas usando paginación de dos niveles. Cuando una pagina no esta en memoria hay un fallo de pagina, y si ya no quedan marcos libres se usa una politica de reemplazo, FIFO o LRU, que se escoge al correr el programa.
 
-## Requisitos
+## Integrantes
 
-- gcc con soporte para C99
+- Juan Camilo Arboleda Arboleda
+- Vanesa Herrera Marulanda
+- Brayan Stiven Gómez Villa
+
+## Que se necesita
+
+- gcc (con C99)
 - make
-- valgrind (opcional, para revisar memory leaks)
+- valgrind si quieren revisar memory leaks (nosotros lo corrimos en WSL con Ubuntu)
 
-## Compilación
+## Compilar
 
 ```bash
 make all
 ```
 
-Esto genera el ejecutable `memsim`. Para borrar los binarios generados:
+Eso deja el ejecutable `memsim`. Para borrar lo compilado:
 
 ```bash
 make clean
 ```
 
-## Uso
+## Como se usa
 
 ```bash
 ./memsim <archivo_entrada> <fifo|lru> [memoria_fisica_kb] [tamano_pagina_bytes]
 ```
 
-- `archivo_entrada`: archivo de texto con los comandos a simular (ver formato abajo).
-- `fifo|lru`: qué política de reemplazo usar cuando no hay marcos físicos libres.
-- `memoria_fisica_kb` (opcional): tamaño de la memoria física en KB. Por defecto 256.
-- `tamano_pagina_bytes` (opcional): **no cambia el tamaño de página real.** El tamaño de página es una constante de compilación (`PAGE_SIZE` en `config.h`, 4096 bytes) usada en varios módulos ya probados; no es configurable en tiempo de ejecución en esta versión. Si se pasa un valor distinto de 4096, el programa lo ignora y avisa por `stderr`, pero sigue corriendo con el valor fijo.
+- `archivo_entrada`: el txt con los comandos (el formato esta mas abajo).
+- `fifo|lru`: la politica de reemplazo.
+- `memoria_fisica_kb`: opcional, por defecto 256. No deja poner menos de 256.
+- `tamano_pagina_bytes`: opcional, por defecto 4096. Tiene que ser potencia de 2 entre 1024 y 65536. Con 4096 la direccion queda como en el enunciado (10 bits PT1, 10 bits PT2 y 12 de offset), si se cambia la PT2 sigue con 10 bits y lo que cambia es el offset y la PT1.
 
-Ejemplo:
+Por ejemplo:
 
 ```bash
 ./memsim tests/test1_basico.txt fifo
+./memsim tests/test4_fifo_vs_lru.txt lru 256 8192
 ```
 
-También se puede correr con el target `run` del Makefile:
+o con el makefile:
 
 ```bash
 make run ARGS="tests/test1_basico.txt lru"
 ```
 
-## Formato del archivo de entrada
+## Archivo de entrada
 
-Un comando por línea:
+Un comando por linea:
 
 ```
 alloc <bytes>
@@ -54,12 +61,15 @@ read <direccion_virtual>
 free <direccion_virtual>
 ```
 
-- `alloc <bytes>`: reserva un bloque de memoria virtual (se redondea hacia arriba al tamaño de página) y lo deja disponible para usarse en los siguientes `write`/`read`.
-- `write <direccion_virtual> <valor>`: dispara la traducción VA→PA sobre esa dirección (crea tablas de nivel 2 si hace falta, y un fallo de página si la página no está cargada). El simulador **no almacena el contenido real de memoria**: el `<valor>` se parsea para mantener el formato del comando, pero se descarta — el objetivo es ejercitar la traducción y las estadísticas, no simular el contenido de la memoria byte por byte.
-- `read <direccion_virtual>`: dispara la misma traducción VA→PA, sin marcar la página como modificada. Por la misma razón que `write`, no devuelve ni imprime ningún valor leído.
-- `free <direccion_virtual>`: libera el bloque que empezó en esa dirección (tiene que ser una dirección devuelta por un `alloc` anterior, no cualquier dirección dentro del bloque).
+- `alloc` reserva un bloque de memoria virtual, se redondea hacia arriba a paginas completas.
+- `write` y `read` hacen la traduccion VA->PA de esa direccion. Si la tabla de segundo nivel no existe se crea, y si la pagina no esta cargada hay fallo de pagina. El `write` ademas marca la pagina como modificada (dirty).
+- `free` libera el bloque que empieza en esa direccion. Tiene que ser la que devolvio el `alloc`, no una del medio del bloque.
 
-Ejemplo de archivo de entrada:
+Ojo: el simulador no guarda el contenido de la memoria. El valor del `write` se lee pero no se guarda en ningun lado y el `read` no imprime nada, lo que importa aca es la traduccion y las estadisticas.
+
+Las direcciones van en decimal. Las lineas vacias o que empiezan con `#` se ignoran.
+
+Ejemplo:
 
 ```
 alloc 8192
@@ -71,7 +81,7 @@ read 4096
 
 ## Salida
 
-Al terminar de leer el archivo de entrada, el programa imprime las estadísticas de la corrida:
+Al final imprime algo asi:
 
 ```
 Total de accesos: N
@@ -79,22 +89,33 @@ Total fallos de pagina: M
 Hit rate: XX.XX%
 Total reemplazos: K
 Politica: FIFO|LRU
+Tiempo en fallos de pagina: X.XXX ms
+Tiempo total: X.XXX ms
 ```
 
-## Estructura del proyecto
+Los tiempos se miden con `clock()`. En Windows casi siempre salen en 0 porque las pruebas son muy cortas, en Linux si se ven valores.
+
+## Pruebas
+
+En `tests/` estan los txt que usamos:
+
+- `test1_basico.txt`: el ejemplo del enunciado.
+- `test2_reemplazos.txt`: 66 paginas seguidas con 64 marcos, para que haya reemplazos.
+- `test3_alloc_free.txt`: alloc y free mezclados con reemplazos.
+- `test4_fifo_vs_lru.txt`: aqui es donde se nota la diferencia entre FIFO y LRU.
+
+Tambien hay dos pruebas en C (`test_translate.c` y `test_paso2_fifo.c`) que no estan en el makefile, toca compilarlas a mano, por ejemplo:
+
+```bash
+gcc -Wall -Werror -std=c99 -Iinclude tests/test_paso2_fifo.c src/page_table.c src/page_config.c src/translate.c src/stats.c src/phys_mem.c src/replacement_fifo.c src/page_fault.c -o test_paso2_fifo
+```
+
+## Estructura
 
 ```
-include/   headers (.h) de cada modulo
-src/       implementacion (.c)
-tests/     archivos de entrada para probar el simulador
+include/   los .h
+src/       los .c
+tests/     archivos de prueba
 Makefile
 ```
 
-Cada archivo se encarga de una sola cosa: la tabla de páginas y la traducción de direcciones van por separado del manejo de memoria física, los fallos de página y las políticas de reemplazo, y estos a su vez van separados del punto de entrada del programa. La idea es que ningún archivo crezca demasiado ni mezcle responsabilidades distintas.
-
-## Notas de la implementación
-
-- La dirección virtual es de 32 bits y se parte en PT1 (10 bits) / PT2 (10 bits) / offset (12 bits).
-- Las tablas de segundo nivel se crean dinámicamente la primera vez que hacen falta, no se reserva todo de entrada.
-- La política de reemplazo (FIFO o LRU) se elige por línea de comandos, no hace falta recompilar para cambiarla.
-- El simulador prioriza la exactitud de la traducción VA→PA, el manejo de fallos y las estadísticas (que es lo que pide la salida esperada) sobre simular el contenido real de la memoria; ver la sección "Formato del archivo de entrada" arriba.
