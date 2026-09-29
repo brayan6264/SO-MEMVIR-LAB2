@@ -1,6 +1,6 @@
 # Reporte de análisis — Simulador de memoria virtual (paginación)
 
-**Integrantes:** _(completar)_
+**Integrantes:** _Juan Camilo Arboleda, Brayan Gomez, Vanesa Herrera_
 **Política de reemplazo asignada al grupo:** _(completar: FIFO o LRU)_ — el simulador implementa ambas políticas para poder compararlas (sección 5).
 
 ## 1. Descripción de las estructuras de datos
